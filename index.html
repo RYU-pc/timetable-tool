@@ -68,6 +68,11 @@ button{
     border-radius:12px;
     color:white;
     cursor:pointer;
+    transition:0.1s;
+}
+
+button:active{
+    transform:scale(0.95);
 }
 
 .dayBtn{
@@ -120,11 +125,11 @@ button{
 
 <div class="grid">
 
-<button class="dayBtn" onclick="addText('月')">月</button>
-<button class="dayBtn" onclick="addText('火')">火</button>
-<button class="dayBtn" onclick="addText('水')">水</button>
-<button class="dayBtn" onclick="addText('木')">木</button>
-<button class="dayBtn" onclick="addText('金')">金</button>
+<button class="dayBtn" onclick="beep(700,80); addText('月')">月</button>
+<button class="dayBtn" onclick="beep(700,80); addText('火')">火</button>
+<button class="dayBtn" onclick="beep(700,80); addText('水')">水</button>
+<button class="dayBtn" onclick="beep(700,80); addText('木')">木</button>
+<button class="dayBtn" onclick="beep(700,80); addText('金')">金</button>
 
 </div>
 
@@ -132,22 +137,22 @@ button{
 
 <div class="grid3">
 
-<button class="numBtn" onclick="addText('1')">1</button>
-<button class="numBtn" onclick="addText('2')">2</button>
-<button class="numBtn" onclick="addText('3')">3</button>
-<button class="numBtn" onclick="addText('4')">4</button>
-<button class="numBtn" onclick="addText('5')">5</button>
-<button class="numBtn" onclick="addText('6')">6</button>
+<button class="numBtn" onclick="beep(900,80); addText('1')">1</button>
+<button class="numBtn" onclick="beep(900,80); addText('2')">2</button>
+<button class="numBtn" onclick="beep(900,80); addText('3')">3</button>
+<button class="numBtn" onclick="beep(900,80); addText('4')">4</button>
+<button class="numBtn" onclick="beep(900,80); addText('5')">5</button>
+<button class="numBtn" onclick="beep(900,80); addText('6')">6</button>
 
 </div>
 
 <div class="grid" style="margin-top:20px;">
 
-<button class="deleteBtn" onclick="deleteText()">
+<button class="deleteBtn" onclick="beep(300,120); deleteText()">
 削除
 </button>
 
-<button class="convertBtn" onclick="convertTimetable()" style="grid-column:span 4;">
+<button class="convertBtn" onclick="beep(1400,180); convertTimetable()" style="grid-column:span 4;">
 変換
 </button>
 
@@ -177,6 +182,38 @@ const timetable = {
 
 let input = "";
 
+// 電子音
+function beep(freq = 800, duration = 80){
+
+    const audioCtx =
+    new (window.AudioContext || window.webkitAudioContext)();
+
+    const oscillator =
+    audioCtx.createOscillator();
+
+    const gainNode =
+    audioCtx.createGain();
+
+    oscillator.type = "square";
+
+    oscillator.frequency.value = freq;
+
+    oscillator.connect(gainNode);
+
+    gainNode.connect(audioCtx.destination);
+
+    gainNode.gain.setValueAtTime(
+        0.08,
+        audioCtx.currentTime
+    );
+
+    oscillator.start();
+
+    oscillator.stop(
+        audioCtx.currentTime + duration / 1000
+    );
+}
+
 function addText(text){
 
     input += text;
@@ -194,7 +231,7 @@ function deleteText(){
 function updateDisplay(){
 
     document.getElementById("display")
-    .textContent = input;
+    .textContent = input || "入力してください";
 }
 
 function convertTimetable(){
