@@ -51,6 +51,22 @@ body{
     font-size:15px;
 }
 
+.statusBar{
+    display:flex;
+    gap:10px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+}
+
+.statusItem{
+    background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.08);
+    padding:10px 14px;
+    border-radius:14px;
+    font-size:14px;
+    color:#cbd5e1;
+}
+
 .card{
     background:rgba(255,255,255,0.08);
     backdrop-filter:blur(12px);
@@ -252,6 +268,16 @@ button:active{
 
 <div class="card">
 
+<div class="statusBar">
+    <div class="statusItem">
+        🔵 システム正常
+    </div>
+
+    <div class="statusItem" id="modeStatus">
+        入力待機中
+    </div>
+</div>
+
 <div class="displayBox">
     <div class="displayTitle">現在の入力</div>
     <div class="display" id="display">
@@ -370,9 +396,37 @@ function playBeep(freq=800,duration=80){
     );
 }
 
+function speak(text){
+
+    speechSynthesis.cancel();
+
+    const utterance =
+    new SpeechSynthesisUtterance(text);
+
+    utterance.lang = "ja-JP";
+
+    utterance.rate = 1.1;
+
+    utterance.pitch = 1;
+
+    speechSynthesis.speak(utterance);
+}
+
 function addText(text){
 
     input += text;
+
+    document.getElementById("modeStatus")
+    .textContent = `入力中：${input}`;
+
+    if(isNaN(text)){
+
+        speak(`${text}曜日`);
+
+    }else{
+
+        speak(`${text}時間目`);
+    }
 
     updateDisplay();
 }
@@ -385,6 +439,8 @@ function deleteText(){
 }
 
 function clearText(){
+
+    speak("入力をリセットしました");
 
     input = "";
 
@@ -401,6 +457,8 @@ function updateDisplay(){
 }
 
 function convertTimetable(){
+
+    speak("時間割を表示します");
 
     const result =
     document.getElementById("result");
@@ -437,14 +495,20 @@ function convertTimetable(){
 
     if(lessons.length === 0){
 
+        document.getElementById("modeStatus")
+        .textContent = "入力エラー";
+
         result.innerHTML += `
         <div class="lessonCard">
-            入力してください
+            ⚠️ 入力してください
         </div>
         `;
 
         return;
     }
+
+    document.getElementById("modeStatus")
+    .textContent = `${lessons.length}時間を表示中`;
 
     lessons.forEach((lesson,index)=>{
 
@@ -459,7 +523,7 @@ function convertTimetable(){
             <div class="lessonInfo">
 
                 <div class="lessonName">
-                    ${lesson}
+                    📘 ${lesson}
                 </div>
 
                 <div class="lessonSub">
