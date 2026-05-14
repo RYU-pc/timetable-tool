@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>時間割変換</title>
+
+<style>
+
+body{
+    margin:0;
+    padding:20px;
+    background:#f5f5f5;
+    font-family:sans-serif;
+}
+
+.container{
+    max-width:500px;
+    margin:auto;
+}
+
+.card{
+    background:white;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+h1{
+    text-align:center;
+    margin-top:0;
+}
+
+.display{
+    background:#222;
+    color:#00ff88;
+    font-size:32px;
+    text-align:center;
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:20px;
+    min-height:50px;
+    word-break:break-all;
+}
+
+.sectionTitle{
+    font-weight:bold;
+    margin-bottom:10px;
+    margin-top:20px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:10px;
+}
+
+.grid3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+button{
+    padding:18px;
+    font-size:22px;
+    border:none;
+    border-radius:12px;
+    color:white;
+    cursor:pointer;
+}
+
+.dayBtn{
+    background:#1976d2;
+}
+
+.numBtn{
+    background:#43a047;
+}
+
+.deleteBtn{
+    background:#e53935;
+}
+
+.convertBtn{
+    background:#6a1b9a;
+}
+
+.result{
+    margin-top:25px;
+}
+
+.lesson{
+    background:#e3f2fd;
+    border-radius:12px;
+    padding:15px;
+    margin-top:10px;
+    font-size:22px;
+}
+
+.period{
+    font-weight:bold;
+    margin-right:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<h1>時間割変換</h1>
+
+<div class="display" id="display"></div>
+
+<div class="sectionTitle">曜日</div>
+
+<div class="grid">
+
+<button class="dayBtn" onclick="addText('月')">月</button>
+<button class="dayBtn" onclick="addText('火')">火</button>
+<button class="dayBtn" onclick="addText('水')">水</button>
+<button class="dayBtn" onclick="addText('木')">木</button>
+<button class="dayBtn" onclick="addText('金')">金</button>
+
+</div>
+
+<div class="sectionTitle">校時</div>
+
+<div class="grid3">
+
+<button class="numBtn" onclick="addText('1')">1</button>
+<button class="numBtn" onclick="addText('2')">2</button>
+<button class="numBtn" onclick="addText('3')">3</button>
+<button class="numBtn" onclick="addText('4')">4</button>
+<button class="numBtn" onclick="addText('5')">5</button>
+<button class="numBtn" onclick="addText('6')">6</button>
+
+</div>
+
+<div class="grid" style="margin-top:20px;">
+
+<button class="deleteBtn" onclick="deleteText()">
+削除
+</button>
+
+<button class="convertBtn" onclick="convertTimetable()" style="grid-column:span 4;">
+変換
+</button>
+
+</div>
+
+<div class="result" id="result"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const timetable = {
+
+    月: ["国語","英語","理科","体育","数学","社会"],
+
+    火: ["理科","英語","数学","社会","総合","総合"],
+
+    水: ["音楽","社会","体育","理科","学活"],
+
+    木: ["英語","美術","道徳","国語","数学","理科"],
+
+    金: ["英語","国語","数学","社会","体育","家庭科"]
+
+};
+
+let input = "";
+
+function addText(text){
+
+    input += text;
+
+    updateDisplay();
+}
+
+function deleteText(){
+
+    input = input.slice(0,-1);
+
+    updateDisplay();
+}
+
+function updateDisplay(){
+
+    document.getElementById("display")
+    .textContent = input;
+}
+
+function convertTimetable(){
+
+    const result =
+    document.getElementById("result");
+
+    result.innerHTML = "";
+
+    let currentDay = "";
+
+    let lessons = [];
+
+    for(let i=0;i<input.length;i++){
+
+        const char = input[i];
+
+        // 曜日
+        if(timetable[char]){
+
+            currentDay = char;
+
+            continue;
+        }
+
+        // 数字
+        if(!isNaN(char) && currentDay){
+
+            const lesson =
+            timetable[currentDay][Number(char)-1];
+
+            if(lesson){
+
+                lessons.push(lesson);
+            }
+        }
+    }
+
+    if(lessons.length === 0){
+
+        result.innerHTML =
+        "入力してください";
+
+        return;
+    }
+
+    lessons.forEach((lesson,index)=>{
+
+        result.innerHTML += `
+        <div class="lesson">
+            <span class="period">
+            ${index+1}校時
+            </span>
+            ${lesson}
+        </div>
+        `;
+    });
+
+}
+
+updateDisplay();
+
+</script>
+
+</body>
+</html>
