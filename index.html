@@ -1,74 +1,120 @@
+# 時間割表示ツール（かっこいいUI版）
+
+```html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>時間割変換</title>
+
+<title>時間割表示ツール</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
 
 <style>
 
+*{
+    box-sizing:border-box;
+}
+
 body{
     margin:0;
+    min-height:100vh;
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    background:
+    linear-gradient(135deg,#0f172a,#111827,#1e293b);
+    color:white;
     padding:20px;
-    background:#f5f5f5;
-    font-family:sans-serif;
 }
 
 .container{
-    max-width:500px;
+    max-width:650px;
     margin:auto;
 }
 
-.card{
-    background:white;
-    border-radius:16px;
-    padding:20px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.1);
+.header{
+    text-align:center;
+    margin-bottom:25px;
 }
 
-h1{
-    text-align:center;
-    margin-top:0;
+.title{
+    font-size:38px;
+    font-weight:700;
+    margin-bottom:8px;
+    letter-spacing:2px;
+}
+
+.subtitle{
+    color:#cbd5e1;
+    font-size:15px;
+}
+
+.card{
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:28px;
+    padding:22px;
+    box-shadow:
+    0 10px 30px rgba(0,0,0,0.35);
+}
+
+.displayBox{
+    background:#020617;
+    border:2px solid #38bdf8;
+    border-radius:22px;
+    padding:20px;
+    margin-bottom:22px;
+}
+
+.displayTitle{
+    font-size:14px;
+    color:#94a3b8;
+    margin-bottom:10px;
 }
 
 .display{
-    background:#222;
-    color:#00ff88;
-    font-size:32px;
-    text-align:center;
-    padding:15px;
-    border-radius:12px;
-    margin-bottom:20px;
-    min-height:50px;
+    min-height:55px;
+    font-size:34px;
+    letter-spacing:4px;
+    color:#67e8f9;
     word-break:break-all;
+    font-weight:700;
+}
+
+.section{
+    margin-top:22px;
 }
 
 .sectionTitle{
-    font-weight:bold;
-    margin-bottom:10px;
-    margin-top:20px;
+    font-size:18px;
+    font-weight:700;
+    margin-bottom:12px;
+    color:#e2e8f0;
 }
 
-.grid{
+.dayGrid{
     display:grid;
     grid-template-columns:repeat(5,1fr);
     gap:10px;
 }
 
-.grid3{
+.numGrid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:10px;
+    gap:12px;
 }
 
 button{
-    padding:18px;
-    font-size:22px;
     border:none;
-    border-radius:12px;
-    color:white;
+    border-radius:20px;
     cursor:pointer;
-    transition:0.1s;
+    color:white;
+    font-family:inherit;
+    transition:0.12s;
+    font-weight:700;
 }
 
 button:active{
@@ -76,36 +122,118 @@ button:active{
 }
 
 .dayBtn{
-    background:#1976d2;
+    background:linear-gradient(135deg,#2563eb,#38bdf8);
+    height:68px;
+    font-size:24px;
+    box-shadow:0 6px 15px rgba(37,99,235,0.4);
 }
 
 .numBtn{
-    background:#43a047;
+    background:linear-gradient(135deg,#16a34a,#4ade80);
+    height:88px;
+    font-size:34px;
+    box-shadow:0 6px 15px rgba(34,197,94,0.35);
+}
+
+.actionArea{
+    display:grid;
+    grid-template-columns:1fr 2fr 1fr;
+    gap:12px;
+    margin-top:24px;
 }
 
 .deleteBtn{
-    background:#e53935;
+    background:linear-gradient(135deg,#dc2626,#f87171);
+    font-size:18px;
 }
 
 .convertBtn{
-    background:#6a1b9a;
+    background:linear-gradient(135deg,#7c3aed,#c084fc);
+    font-size:24px;
+}
+
+.clearBtn{
+    background:linear-gradient(135deg,#475569,#94a3b8);
+    font-size:18px;
+}
+
+.actionBtn{
+    height:70px;
 }
 
 .result{
-    margin-top:25px;
+    margin-top:28px;
 }
 
-.lesson{
-    background:#e3f2fd;
-    border-radius:12px;
-    padding:15px;
-    margin-top:10px;
+.resultTitle{
+    font-size:24px;
+    font-weight:700;
+    margin-bottom:14px;
+}
+
+.lessonCard{
+    background:rgba(255,255,255,0.09);
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:22px;
+    padding:18px;
+    margin-top:12px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+}
+
+.periodBadge{
+    min-width:74px;
+    height:74px;
+    border-radius:18px;
+    background:linear-gradient(135deg,#0ea5e9,#22d3ee);
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-size:22px;
+    font-weight:700;
+    box-shadow:0 4px 15px rgba(14,165,233,0.4);
 }
 
-.period{
-    font-weight:bold;
-    margin-right:10px;
+.lessonInfo{
+    flex:1;
+}
+
+.lessonName{
+    font-size:28px;
+    font-weight:700;
+}
+
+.lessonSub{
+    color:#cbd5e1;
+    margin-top:4px;
+    font-size:14px;
+}
+
+.footerText{
+    text-align:center;
+    margin-top:18px;
+    color:#94a3b8;
+    font-size:13px;
+}
+
+@media(max-width:600px){
+
+    .title{
+        font-size:30px;
+    }
+
+    .display{
+        font-size:28px;
+    }
+
+    .lessonName{
+        font-size:24px;
+    }
+
+    .numBtn{
+        height:82px;
+    }
 }
 
 </style>
@@ -115,50 +243,75 @@ button:active{
 
 <div class="container">
 
+<div class="header">
+    <div class="title">時間割表示</div>
+    <div class="subtitle">
+        曜日と校時を押して今日の時間割を表示
+    </div>
+</div>
+
 <div class="card">
 
-<h1>時間割変換</h1>
-
-<div class="display" id="display"></div>
-
-<div class="sectionTitle">曜日</div>
-
-<div class="grid">
-
-<button class="dayBtn" onclick="beep(700,80); addText('月')">月</button>
-<button class="dayBtn" onclick="beep(700,80); addText('火')">火</button>
-<button class="dayBtn" onclick="beep(700,80); addText('水')">水</button>
-<button class="dayBtn" onclick="beep(700,80); addText('木')">木</button>
-<button class="dayBtn" onclick="beep(700,80); addText('金')">金</button>
-
+<div class="displayBox">
+    <div class="displayTitle">現在の入力</div>
+    <div class="display" id="display">
+        入力してください
+    </div>
 </div>
 
-<div class="sectionTitle">校時</div>
+<div class="section">
+    <div class="sectionTitle">曜日</div>
 
-<div class="grid3">
+    <div class="dayGrid">
 
-<button class="numBtn" onclick="beep(900,80); addText('1')">1</button>
-<button class="numBtn" onclick="beep(900,80); addText('2')">2</button>
-<button class="numBtn" onclick="beep(900,80); addText('3')">3</button>
-<button class="numBtn" onclick="beep(900,80); addText('4')">4</button>
-<button class="numBtn" onclick="beep(900,80); addText('5')">5</button>
-<button class="numBtn" onclick="beep(900,80); addText('6')">6</button>
+        <button class="dayBtn" onclick="playBeep(650,70); addText('月')">月</button>
+        <button class="dayBtn" onclick="playBeep(650,70); addText('火')">火</button>
+        <button class="dayBtn" onclick="playBeep(650,70); addText('水')">水</button>
+        <button class="dayBtn" onclick="playBeep(650,70); addText('木')">木</button>
+        <button class="dayBtn" onclick="playBeep(650,70); addText('金')">金</button>
 
+    </div>
 </div>
 
-<div class="grid" style="margin-top:20px;">
+<div class="section">
+    <div class="sectionTitle">校時</div>
 
-<button class="deleteBtn" onclick="beep(300,120); deleteText()">
-削除
-</button>
+    <div class="numGrid">
 
-<button class="convertBtn" onclick="beep(1400,180); convertTimetable()" style="grid-column:span 4;">
-変換
-</button>
+        <button class="numBtn" onclick="playBeep(850,60); addText('1')">1</button>
+        <button class="numBtn" onclick="playBeep(850,60); addText('2')">2</button>
+        <button class="numBtn" onclick="playBeep(850,60); addText('3')">3</button>
+        <button class="numBtn" onclick="playBeep(850,60); addText('4')">4</button>
+        <button class="numBtn" onclick="playBeep(850,60); addText('5')">5</button>
+        <button class="numBtn" onclick="playBeep(850,60); addText('6')">6</button>
+
+    </div>
+</div>
+
+<div class="actionArea">
+
+    <button class="actionBtn deleteBtn"
+    onclick="playBeep(300,120); deleteText()">
+    削除
+    </button>
+
+    <button class="actionBtn convertBtn"
+    onclick="playBeep(1350,150); convertTimetable()">
+    変換
+    </button>
+
+    <button class="actionBtn clearBtn"
+    onclick="playBeep(450,120); clearText()">
+    全消去
+    </button>
 
 </div>
 
 <div class="result" id="result"></div>
+
+<div class="footerText">
+例：月12345火6
+</div>
 
 </div>
 
@@ -168,25 +321,23 @@ button:active{
 
 const timetable = {
 
-    月: ["国語","英語","理科","体育","数学","社会"],
+    月:["国語","英語","理科","体育","数学","社会"],
 
-    火: ["理科","英語","数学","社会","総合","総合"],
+    火:["理科","英語","数学","社会","総合","総合"],
 
-    水: ["音楽","社会","体育","理科","学活"],
+    水:["音楽","社会","体育","理科","学活"],
 
-    木: ["英語","美術","道徳","国語","数学","理科"],
+    木:["英語","美術","道徳","国語","数学","理科"],
 
-    金: ["英語","国語","数学","社会","体育","家庭科"]
-
+    金:["英語","国語","数学","社会","体育","家庭科"]
 };
 
 let input = "";
 
-// 電子音
-function beep(freq = 800, duration = 80){
+const audioCtx =
+new (window.AudioContext || window.webkitAudioContext)();
 
-    const audioCtx =
-    new (window.AudioContext || window.webkitAudioContext)();
+function playBeep(freq=800,duration=80){
 
     const oscillator =
     audioCtx.createOscillator();
@@ -203,8 +354,13 @@ function beep(freq = 800, duration = 80){
     gainNode.connect(audioCtx.destination);
 
     gainNode.gain.setValueAtTime(
-        0.08,
+        0.06,
         audioCtx.currentTime
+    );
+
+    gainNode.gain.exponentialRampToValueAtTime(
+        0.001,
+        audioCtx.currentTime + duration / 1000
     );
 
     oscillator.start();
@@ -228,6 +384,16 @@ function deleteText(){
     updateDisplay();
 }
 
+function clearText(){
+
+    input = "";
+
+    updateDisplay();
+
+    document.getElementById("result")
+    .innerHTML = "";
+}
+
 function updateDisplay(){
 
     document.getElementById("display")
@@ -239,7 +405,8 @@ function convertTimetable(){
     const result =
     document.getElementById("result");
 
-    result.innerHTML = "";
+    result.innerHTML =
+    `<div class="resultTitle">今日の時間割</div>`;
 
     let currentDay = "";
 
@@ -249,7 +416,6 @@ function convertTimetable(){
 
         const char = input[i];
 
-        // 曜日
         if(timetable[char]){
 
             currentDay = char;
@@ -257,7 +423,6 @@ function convertTimetable(){
             continue;
         }
 
-        // 数字
         if(!isNaN(char) && currentDay){
 
             const lesson =
@@ -272,8 +437,11 @@ function convertTimetable(){
 
     if(lessons.length === 0){
 
-        result.innerHTML =
-        "入力してください";
+        result.innerHTML += `
+        <div class="lessonCard">
+            入力してください
+        </div>
+        `;
 
         return;
     }
@@ -281,15 +449,29 @@ function convertTimetable(){
     lessons.forEach((lesson,index)=>{
 
         result.innerHTML += `
-        <div class="lesson">
-            <span class="period">
-            ${index+1}校時
-            </span>
-            ${lesson}
+
+        <div class="lessonCard">
+
+            <div class="periodBadge">
+                ${index+1}
+            </div>
+
+            <div class="lessonInfo">
+
+                <div class="lessonName">
+                    ${lesson}
+                </div>
+
+                <div class="lessonSub">
+                    ${index+1}校時
+                </div>
+
+            </div>
+
         </div>
+
         `;
     });
-
 }
 
 updateDisplay();
@@ -298,3 +480,4 @@ updateDisplay();
 
 </body>
 </html>
+```
